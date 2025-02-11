@@ -1,18 +1,98 @@
 import kagglehub
 import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+import nltk
+import spacy
 import re
 import string
-from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
-import nltk
+from nltk.stem import WordNetLemmatizer
+from textblob import TextBlob
 
-# Download stopwords if not already available
+# Download NLTK resources (if not already downloaded)
+nltk.download('punkt')
 nltk.download('stopwords')
+nltk.download('wordnet')
+
+# Load spaCy model (replace "data_set" with the correct model name)
+try:
+    nlp = spacy.load("en_core_web_sm")  # Or a larger model like "en_core_web_lg"
+except OSError:
+    print("Downloading en_core_web_sm model...")
+    spacy.cli.download("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm")
+
+# Load stop words
 stop_words = set(stopwords.words('english'))
 
 # Add more stop words
 additional_stop_words = {'also', 'would', 'could', 'should', 'may', 'might', 'must', 'need', 'want', 'try', 'one', 'two', 'three', 'using', 'use', 'used', 'way', 'ways'}
 stop_words = stop_words.union(additional_stop_words)
+
+# Initialize lemmatizer
+lemmatizer = WordNetLemmatizer()
+
+def clean_text(text):
+    """
+    Cleans the input text by:
+    1. Converting to lowercase.
+    2. Removing punctuation.
+    3. Removing stop words.
+    4. Lemmatizing words.
+
+    Args:
+        text (str): The text to clean.
+
+    Returns:
+        str: The cleaned text.
+    """
+    text = text.lower()
+    text = re.sub(r"[{}]".format(string.punctuation), "", text)  # Remove punctuation
+    tokens = nltk.word_tokenize(text)  # Use nltk.word_tokenize
+    tokens = [word for word in tokens if word not in stop_words]
+    tokens = [lemmatizer.lemmatize(word) for word in tokens]
+    return " ".join(tokens)
+
+def extract_entities(text):
+    """
+    Extracts named entities from the text using spaCy.
+
+    Args:
+        text (str): The text to analyze.
+
+    Returns:
+        list: A list of tuples, where each tuple contains the entity text and its label.
+    """
+    doc = nlp(text)
+    return [(ent.text, ent.label_) for ent in doc.ents]
+
+def sentiment_analysis(text):
+    """
+    Performs sentiment analysis on the given text using TextBlob.
+
+    Args:
+        text (str): The text to analyze.
+
+    Returns:
+        dict: A dictionary containing the polarity, subjectivity, and overall sentiment label.
+    """
+    blob = TextBlob(text)
+    sentiment = blob.sentiment
+    polarity = sentiment.polarity  # Range: -1 (negative) to 1 (positive)
+    subjectivity = sentiment.subjectivity  # Range: 0 (objective) to 1 (subjective)
+
+    if polarity > 0.1:
+        sentiment_label = "Positive"
+    elif polarity < -0.1:
+        sentiment_label = "Negative"
+    else:
+        sentiment_label = "Neutral"
+
+    return {
+        "polarity": polarity,
+        "subjectivity": subjectivity,
+        "sentiment": sentiment_label
+    }
 
 # Download latest dataset
 path = kagglehub.dataset_download("syedmharis/software-engineering-interview-questions-dataset")
@@ -24,13 +104,6 @@ df = pd.read_csv(f"{path}/interview_questions.csv")
 # Display first few rows
 print("Original Data:")
 print(df.head())
-
-# Text Cleaning Function
-def clean_text(text):
-    text = text.lower()  # Convert to lowercase
-    text = re.sub(f"[{string.punctuation}]", "", text)  # Remove punctuation
-    text = " ".join([word for word in text.split() if word not in stop_words])  # Remove stopwords
-    return text
 
 # Apply cleaning to questions
 df['cleaned_question'] = df['Question'].apply(clean_text)
