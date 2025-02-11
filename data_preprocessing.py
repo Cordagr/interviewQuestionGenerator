@@ -1,5 +1,5 @@
+import kagglehub
 import pandas as pd
-import numpy as np
 import re
 import string
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -10,8 +10,12 @@ import nltk
 nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))
 
+# Download latest dataset
+path = kagglehub.dataset_download("syedmharis/software-engineering-interview-questions-dataset")
+print("Path to dataset files:", path)
+
 # Load dataset (Assuming CSV format)
-df = pd.read_csv("interview_questions.csv")
+df = pd.read_csv(f"{path}/interview_questions.csv")
 
 # Display first few rows
 print("Original Data:")
