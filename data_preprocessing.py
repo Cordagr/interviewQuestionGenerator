@@ -10,6 +10,10 @@ import nltk
 nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))
 
+# Add more stop words
+additional_stop_words = {'also', 'would', 'could', 'should', 'may', 'might', 'must', 'need', 'want', 'try', 'one', 'two', 'three', 'using', 'use', 'used', 'way', 'ways'}
+stop_words = stop_words.union(additional_stop_words)
+
 # Download latest dataset
 path = kagglehub.dataset_download("syedmharis/software-engineering-interview-questions-dataset")
 print("Path to dataset files:", path)
@@ -31,12 +35,29 @@ def clean_text(text):
 # Apply cleaning to questions
 df['cleaned_question'] = df['Question'].apply(clean_text)
 
-# Convert to TF-IDF matrix
-vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(df['cleaned_question'])
+# Grouping (Example: Group by question category if available)
+# Assuming you have a 'Category' column in your DataFrame
+if 'Category' in df.columns:
+    grouped = df.groupby('Category')['cleaned_question'].apply(lambda x: ' '.join(x))
+    print("Grouped Data (by Category):")
+    print(grouped)
+else:
+    print("No 'Category' column found. Skipping grouping.")
+    grouped = None  # Or handle the case where grouping isn't possible
 
-# Convert to DataFrame
-tfidf_df = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())
+# Convert to TF-IDF matrix
+if grouped is not None:
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(grouped)
+
+    # Convert to DataFrame
+    tfidf_df = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())
+else:
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(df['cleaned_question'])
+
+    # Convert to DataFrame
+    tfidf_df = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())
 
 # Save cleaned data
 df.to_csv("cleaned_interview_questions.csv", index=False)
