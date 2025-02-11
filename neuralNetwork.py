@@ -3,7 +3,7 @@ import tensorflow as tf
 
 
 # Select % 75 of dataset
-train_df = df_sample(frac=.075,, random_state = 4)
+train_df = df_sample(frac=.75,, random_state = 4)
 
 # Dropping training data from orig training set
 val_df = df.drop(train_df.index)
