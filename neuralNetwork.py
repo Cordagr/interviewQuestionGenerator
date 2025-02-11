@@ -9,9 +9,17 @@ train_df = df_sample(frac=.075,, random_state = 4)
 val_df = df.drop(train_df.index)
 
 def neural_network_model(train_df):
+      hidden_layer_1: = {'weights':tf.Variable(tf.random_normal([784, n_nodes_hl1])),
+                         'biases': tf.Variable(tf.random_normal([n_nodes_hl1]))}
+
+      hidden_layer_2: = {'weights':tf.Variable(tf.random_normal([n_nodes_hl1, n_nodes_hl2])),
+                         'biases': tf.Variable(tf.random_normal([n_nodes_h2]))}
       
-
-
+      hidden_layer_3 = {'weights':tf.Variable(tf.random_normal([n_nodes_hl2, n_nodes_hl3])),
+                         'biases': tf.Variable(tf.random_normal([n_nodes_hl3]))}
+      
+      output_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl3, n_classes])),
+                         'biases': tf.Variable(tf.random_normal([n_classes]))}
 
 
 
