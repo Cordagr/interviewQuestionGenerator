@@ -129,8 +129,27 @@ else:
     vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(df['cleaned_question'])
 
-    # Convert to DataFrame
-    tfidf_df = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())
+
+# Named Entity Recognition (NER) Function
+def extract_entities(text):
+    doc = nlp(text)
+    entities = [ent.text for ent in doc.ents]  # Extract named entities
+    return ", ".join(entities) if entities else "None"
+
+# Apply cleaning to questions
+df['cleaned_question'] = df['Question'].apply(clean_text)
+
+# Apply NER to extract key entities
+df['named_entities'] = df['Question'].apply(extract_entities)
+
+# Convert to TF-IDF matrix
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(df['cleaned_question'])
+
+
+ # Convert to DataFrame
+tfidf_df = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())
+
 
 # Save cleaned data
 df.to_csv("cleaned_interview_questions.csv", index=False)
