@@ -33,10 +33,30 @@ task_metrics = task_meta["metric_funcs"]
 
 checkpoint = "answerdotai/ModernBERT-base"  # "answerdotai/ModernBERT-base", "answerdotai/ModernBERT-large"
 
+#Load dataset
+dataset = load.datasets("processed_data",task)
 
+def get_label_question_label_map(datasets_, train_ds_name):
+    # Extract features
 
+    key_word_to_questions = defaultdict(list)
+    # Define a broad list of programming languages & skills
+    skill_keywords = {
+        "Python": r"\b(python|pandas|numpy|flask|django)\b",
+        "Java": r"\b(java|spring|hibernate|jvm|junit)\b",
+        "C++": r"\b(c\+\+|stl|boost|cpp)\b",
+        "JavaScript": r"\b(javascript|js|node\.js|react|angular|vue)\b",
+        "SQL": r"\b(sql|database|postgresql|mysql|joins|queries)\b",
+        "Machine Learning": r"\b(machine learning|ml|neural network|tensorflow|pytorch|deep learning)\b",
+        "Data Structures & Algorithms": r"\b(binary search|linked list|graph|tree|sorting|recursion)\b"
+    }
 
+    topics_to_assigned_questions = defaultdict(list)
 
+    for question in dataset:
+        # Regex up to Difficulty and categorize differently
+        question_text = question
+    
 
 
 
