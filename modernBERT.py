@@ -1,5 +1,5 @@
 import torch
-from transformers import pipeline
+from transformers import pipeline, AutoModelForSequenceClassification
 from pprint import pprint
 import numpy as np 
 import pandas as pd
@@ -35,6 +35,10 @@ checkpoint = "answerdotai/ModernBERT-base"  # "answerdotai/ModernBERT-base", "an
 
 #Load dataset
 dataset = load.datasets("processed_data",task)
+# Loading predefined model
+model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased",  problem_type="multi_label_classification", num_labels=len(labels),id2label=id2label,label2id=label2id)
+
+
 
 def get_label_question_label_map(datasets_, train_ds_name):
     # Extract features
