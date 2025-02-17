@@ -84,10 +84,20 @@ pprint.pprint(categorized_data)
     }
 } """
 
+# Convert dataset into DataFrame for BERT training
+df = pd.read_csv(dataset_path, header=None, names=["ID", "Question", "Answer", "Topic", "Difficulty"])
+
+# Create label mappings
+topic_labels = {label: idx for idx, label in enumerate(df["Topic"].unique())}
+difficulty_labels = {"Easy": 0, "Medium": 1, "Hard": 2}
+
+# Convert labels to numerical format
+df["topic_id"] = df["Topic"].map(topic_labels)
+df["difficulty_id"] = df["Difficulty"].map(difficulty_labels)
+
+
+
 # Loading predefined model
 model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased",  problem_type="multi_label_classification", num_labels=len(labels),id2label=id2label,label2id=label2id)
-
-
-
 
 
