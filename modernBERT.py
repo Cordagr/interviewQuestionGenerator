@@ -1,4 +1,6 @@
 import torch
+from sklearn.metrics import matthews_corrcoef, accuracy_score, f1_score
+from scipy.stats import pearsonr, spearmanr
 from transformers import pipeline, AutoModelForSequenceClassification
 from pprint import pprint
 import numpy as np 
@@ -15,8 +17,6 @@ from transformers import (
     TrainerCallback,
 )
 
-from sklearn.metrics import matthews_corrcoef, accuracy_score, f1_score
-from scipy.stats import pearsonr, spearmanr
 
 def parse_and_categorize_questions(dataset_path):
     """
@@ -66,7 +66,6 @@ dataset_path = "questions_dataset.csv"  # Update with the correct file path
 categorized_data = parse_and_categorize_questions(dataset_path)
 
 # Print results (example output)
-import pprint
 pprint.pprint(categorized_data)
 
 # Below is strucutured format after parsing and cartegorizing 
@@ -85,8 +84,8 @@ pprint.pprint(categorized_data)
     }
 } """
 
-
-
+# Loading predefined model
+model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased",  problem_type="multi_label_classification", num_labels=len(labels),id2label=id2label,label2id=label2id)
 
 
 
