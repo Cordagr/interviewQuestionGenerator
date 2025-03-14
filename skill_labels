@@ -1,0 +1,13 @@
+skill_labels = {
+    "Python": 0,
+    "Java": 1,
+    "JavaScript": 2,
+    "SQL": 3,
+    "Machine Learning": 4,
+    "Data Science": 5,
+    "DevOps": 6,
+    "Cloud Computing": 7,
+    "Web Development": 8,
+    "Mobile Development": 9,
+    # Add more skills as needed
+}
